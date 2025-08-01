@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import QuantityClient from './quantityClient'; 
 
-export default async function MenuDetailPage({
+export default async function Page({
   params,
 }: {
   params: { id: string };
@@ -16,9 +16,7 @@ export default async function MenuDetailPage({
     where: { id },
   });
 
-  if (!menu) return notFound();
-
-
+  if (!menu) return notFound()
   return (
     <main className="min-h-screen bg-gray-50 py-10">
       <h1 className="text-2xl font-bold text-center mb-6">Menu Yang Kamu Pilih</h1>
