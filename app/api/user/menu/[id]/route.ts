@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/lib/prisma';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
+export async function GET(request: NextRequest) {
+  const url = request.nextUrl;
+  const id = url.pathname.split("/").pop(); // ambil [id] dari URL path
 
   if (!id) {
     return NextResponse.json({ error: "ID tidak valid" }, { status: 400 });
