@@ -6,17 +6,9 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import QuantityClient from './quantityClient';
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function Page(props: Props) {
-  const id = props.params.id;
-
+export default async function Page({ params }: { params: { id: string } }) {
   const menu = await prisma.menu.findUnique({
-    where: { id },
+    where: { id: params.id },
   });
 
   if (!menu) return notFound();
