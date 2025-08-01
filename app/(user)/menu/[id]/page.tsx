@@ -5,14 +5,17 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import QuantityClient from './quantityClient'; // 👈 Import komponen client
 
+import { use } from 'react';
+
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function MenuDetailPage({ params }: Props) {
-  const menu = await prisma.menu.findUnique({
-    where: { id: params.id },
-  });
+   const { id } = await params;
+   const menu = await prisma.menu.findUnique({
+     where: { id: id },  // pakai id yang sudah di-`await` dan di-destructuring
+   });
 
   if (!menu) return notFound();
 
