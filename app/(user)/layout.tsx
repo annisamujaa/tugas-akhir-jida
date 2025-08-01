@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">
-        <main className="felx-grow">
+        <main className="flex-grow">
           <NextAuthSession>
           <Navbar />
           {/* Main content area */}

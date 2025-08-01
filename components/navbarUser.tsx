@@ -13,8 +13,7 @@ export default function Navbar() {
             src="/assets/images/logo.png"
             alt="Logo"
             width={50}
-            height={0}
-            layout="intrinsic"
+            height={50}
             className="object-contain"
             priority
           />

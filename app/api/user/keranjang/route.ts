@@ -1,14 +1,18 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; 
-import { NextRequest} from 'next/server';
+import { NextRequest } from 'next/server';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     const { userId, menuId, size, quantity, extraCheese, totalPrice } = body;
 
-    const newMenu = await prisma.keranjang.create({
+    if (!userId || !menuId || !size || !quantity || !totalPrice) {
+      return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
+    }
+
+    const newCartItem = await prisma.keranjang.create({
       data: {
         userId,
         menuId,
@@ -19,9 +23,9 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(newMenu, { status: 201 });
+    return NextResponse.json(newCartItem, { status: 201 });
   } catch (error: any) {
-    console.error("Gagal membuat menu:", error.message);
+    console.error("Gagal menyimpan menu:", error);
     return NextResponse.json(
       { error: "Terjadi kesalahan saat menyimpan menu", detail: error.message },
       { status: 500 }
@@ -61,6 +65,3 @@ export async function DELETE(request: NextRequest) {
 
   return NextResponse.json({ success: true, message: `Deleted product with ID ${id}` });
 }
-
-
-

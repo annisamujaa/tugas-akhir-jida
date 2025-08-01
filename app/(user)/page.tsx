@@ -56,7 +56,8 @@ export default function Home() {
                 <Image
                 src={kaegoris.image}
                 alt={kaegoris.name}
-                fill
+                width={300}
+                height={300}
                 className="rounded-full object-cover"
                />
                </div>

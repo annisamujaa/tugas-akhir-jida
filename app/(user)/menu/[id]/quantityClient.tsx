@@ -20,7 +20,7 @@ export default function QuantityClient({price, menuId,}: {price: number; menuId:
       alert('Silakan pilih ukuran terlebih dahulu');
       return;
     }
-
+    
     try {
       const res = await fetch('/api/user/keranjang', {
         method: 'POST',
@@ -36,6 +36,7 @@ export default function QuantityClient({price, menuId,}: {price: number; menuId:
       });
 
       const data = await res.json();
+      console.log("Raw response:", data);
       if (res.ok) {
         alert('Berhasil ditambahkan ke keranjang!');
       } else {
@@ -54,6 +55,7 @@ export default function QuantityClient({price, menuId,}: {price: number; menuId:
 
   const increment = () => setQuantity((prev) => prev + 1);
   const decrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  console.log("SESSION", session);
 
   return (
     <div className="my-6 space-y-5">
