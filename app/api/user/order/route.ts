@@ -1,6 +1,7 @@
 import  {prisma} from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
+import { auth } from "@/app/api/auth/[...nextauth]/route";
 import { authOptions } from "@/lib/auth"; 
 
 declare module "next-auth" {
@@ -67,7 +68,8 @@ export async function POST(request: Request) {
 
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
+  const session = await auth(); 
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
