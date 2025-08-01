@@ -1,21 +1,16 @@
-import { NextResponse } from "next/server";
-import { prisma } from '@/lib/prisma';
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const menu = await prisma.menu.findUnique({
-      where: { id: params.id },
-    });
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const id = context.params.id;
 
-    if (!menu) {
-      return NextResponse.json({ error: 'Menu tidak ditemukan' }, { status: 404 });
-    }
+  const menu = await prisma.menu.findUnique({
+    where: { id },
+  });
 
-    return NextResponse.json(menu);
-  } catch (error) {
-    return NextResponse.json({ error: 'Gagal mengambil menu' }, { status: 500 });
+  if (!menu) {
+    return new Response("Menu not found", { status: 404 });
   }
+
+  return Response.json(menu);
 }
