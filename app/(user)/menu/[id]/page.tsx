@@ -1,17 +1,19 @@
 // ✅ /app/menu/[id]/page.tsx
-export const dynamic = 'force-dynamic'; // <— TAMBAHKAN INI
+export const dynamic = 'force-dynamic';
 
 import { prisma } from '@/lib/prisma';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import QuantityClient from './quantityClient';
 
-export default async function Page({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = await params;
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function Page(props: Props) {
+  const id = props.params.id;
 
   const menu = await prisma.menu.findUnique({
     where: { id },
@@ -42,7 +44,6 @@ export default async function Page({
       <div className="max-w-3xl mx-auto">
         <QuantityClient price={menu.price} menuId={menu.id} />
       </div>
-
     </main>
   );
 }
