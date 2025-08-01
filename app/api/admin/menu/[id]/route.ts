@@ -1,15 +1,17 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
-  const body = await request.json();
-  const { name, price, description, image } = body;
+export async function PATCH(request: NextRequest) {
+  const id = request.nextUrl.pathname.split('/').pop(); // ambil ID dari URL
+
+  if (!id) {
+    return NextResponse.json({ error: 'ID tidak valid' }, { status: 400 });
+  }
 
   try {
+    const body = await request.json();
+    const { name, price, description, image } = body;
+
     const updatedMenu = await prisma.menu.update({
       where: { id },
       data: { name, price, description, image },
@@ -17,22 +19,27 @@ export async function PATCH(
 
     return NextResponse.json(updatedMenu);
   } catch (error) {
-    console.error('Update error:', error);
-    return NextResponse.json(
-      { error: 'Gagal mengupdate produk' },
-      { status: 500 }
-    );
+    console.error('PATCH menu error:', error);
+    return NextResponse.json({ error: 'Gagal mengupdate produk' }, { status: 500 });
   }
 }
 
-export async function GET(request: Request,{ params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
+  const id = request.nextUrl.pathname.split('/').pop(); // ambil ID dari URL
+
+  if (!id) {
+    return NextResponse.json({ error: 'ID tidak valid' }, { status: 400 });
+  }
+
   try {
     const menu = await prisma.menu.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
+
     if (!menu) {
       return NextResponse.json({ error: 'Menu tidak ditemukan' }, { status: 404 });
     }
+
     return NextResponse.json(menu);
   } catch (error) {
     console.error('GET menu error:', error);

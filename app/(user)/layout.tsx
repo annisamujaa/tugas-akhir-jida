@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import Navbar from "@/components/navbarUser";
 import Footer from "@/components/footer";
-import NextAuthSession from './nextAuthSession';
+import NextAuthSession from '../nextAuthSession';
 
 export const metadata: Metadata = {
   title: "Pizza Hut",
@@ -16,8 +16,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col min-h-screen">
-        <main className="flex-grow">
+      <body>
+        <main className="">
           <NextAuthSession>
           <Navbar />
           {/* Main content area */}
