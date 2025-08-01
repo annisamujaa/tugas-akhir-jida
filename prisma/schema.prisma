@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String?
+  role      String  @default("user")
+  verifiedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  otps      otps[]
+  keranjang keranjang[]
+  order     order[] 
+}
+
+model otps {
+  id        String   @id @default(cuid())
+  code      String
+  expiry    DateTime
+  userId    String
+  user      users    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model menu {
+    id        String   @id @default(cuid())
+    name      String
+    price     Float
+    description String
+    category String
+    image     String
+    keranjang keranjang[]
+    orderItems orderItems[]
+}
+
+model keranjang {
+  id        String   @id @default(cuid())
+  userId    String
+  user      users    @relation(fields: [userId], references: [id])
+  menuId    String
+  menu      menu     @relation(fields: [menuId], references: [id])
+  size      String
+  quantity  Int
+  extraCheese Boolean
+  totalPrice Float
+}
+
+model order {
+  id         String       @id @default(uuid())
+  userId     String
+  user       users         @relation(fields: [userId], references: [id])
+  nama       String
+  email      String
+  noHp       String
+  alamat     String
+  metode    String
+  paymentMethod    String?
+  paymentDetail String?
+  total     Float?
+  createdAt  DateTime     @default(now())
+  items      orderItems[]
+}
+
+model orderItems {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       order    @relation(fields: [orderId], references: [id])
+  menuId      String
+  menu        menu     @relation(fields: [menuId], references: [id])
+  size        String
+  quantity    Int
+  extraCheese Boolean
+  subtotal    Float
+}
