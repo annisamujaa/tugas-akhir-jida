@@ -1,16 +1,20 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+// app/api/admin/menu/[id]/route.ts
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-  const id = context.params.id;
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
+export async function GET(req: Request) {
+  const url = new URL(req.url)
+  const id = url.pathname.split("/").pop() // ambil ID dari URL
+
+  // contoh: fetch menu dari DB pakai ID
   const menu = await prisma.menu.findUnique({
-    where: { id },
-  });
+    where: { id: id || "" }
+  })
 
   if (!menu) {
-    return new Response("Menu not found", { status: 404 });
+    return NextResponse.json({ error: "Menu not found" }, { status: 404 })
   }
 
-  return Response.json(menu);
+  return NextResponse.json(menu)
 }
