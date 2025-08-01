@@ -14,8 +14,7 @@ export default function Navbar() {
             alt="Logo"
             width={50}
             height={50}
-            className="object-contain"
-            priority
+            
           />
         </Link>
     </div>
