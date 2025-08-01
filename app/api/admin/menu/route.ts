@@ -43,34 +43,6 @@ export async function POST(request: Request) {
   }
 }
 
-// // Mengupdate data
-// export async function PATCH(request: NextRequest) {
-//   const searchParams = request.nextUrl.searchParams;
-//   const id = searchParams.get('id');
-
-//   if (!id) {
-//     return NextResponse.json({ error: 'ID tidak diberikan' }, { status: 400 });
-//   }
-
-//   const body = await request.json();
-//   const { name, description, image } = body;
-
-//   const index = menus.findIndex((p) => p.id === Number(id));
-//   if (index === -1) {
-//     return NextResponse.json({ error: 'Produk tidak ditemukan' }, { status: 404 });
-//   }
-
-//   menus[index] = {
-//     ...menus[index],
-//     name: name ?? menus[index].name,
-//     description: description ?? menus[index].description,
-//     image: image ?? menus[index].image,
-//   };
-
-//   return NextResponse.json(menus[index]);
-// }
-
-// Menghapus data
 export async function DELETE(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const id = searchParams.get('id'); // e.g. `/api/search?id=hello`
