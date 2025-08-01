@@ -3,18 +3,21 @@
 import { prisma } from '@/lib/prisma';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import QuantityClient from './quantityClient'; // 👈 Import komponen client
+import QuantityClient from './quantityClient'; 
 
-interface Props {
+export default async function MenuDetailPage({
+  params,
+}: {
   params: { id: string };
-}
-
-export default async function MenuDetailPage({ params }: Props) {
+}) {
   const { id } = params;
 
-  const menu = await prisma.menu.findUnique({ where: { id } }); 
+  const menu = await prisma.menu.findUnique({
+    where: { id },
+  });
 
   if (!menu) return notFound();
+
 
   return (
     <main className="min-h-screen bg-gray-50 py-10">
