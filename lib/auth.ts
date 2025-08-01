@@ -1,19 +1,25 @@
-// lib/auth.ts
+import NextAuth from "next-auth";
 import { PrismaClient } from "@/app/generated/prisma";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import { NextAuthOptions } from "next-auth";
+
+// Import your providers here
 import CredentialsProvider from "next-auth/providers/credentials";
+
 import GoogleProvider from "next-auth/providers/google";
 
 const prisma = new PrismaClient();
-
 export const authOptions: NextAuthOptions = {
   providers: [
-    GoogleProvider({
+     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      authorization: { params: { prompt: "select_account" } },
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -45,37 +51,40 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   secret: process.env.NEXTAUTH_SECRET,
+
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === "google") {
-        if (!user.email) throw new Error("No email from Google account");
+    if (account?.provider === "google") {
+      if (!user.email) throw new Error("No email from Google account");
 
-        let existingUser = await prisma.users.findUnique({ where: { email: user.email } });
+      let existingUser = await prisma.users.findUnique({ where: { email: user.email } });
 
-        if (!existingUser) {
-          existingUser = await prisma.users.create({
-            data: {
-              name: user.name || "",
-              email: user.email,
-              role: "user",
-              verifiedAt: new Date(),
-            },
-          });
-        } else if (!existingUser.verifiedAt) {
-          existingUser = await prisma.users.update({
-            where: { email: user.email },
-            data: { verifiedAt: new Date() },
-          });
-        }
+    if (!existingUser) {
+      existingUser = await prisma.users.create({
+        data: {
+          name: user.name || "",
+          email: user.email,
+          role: "user",
+          verifiedAt: new Date(),
+        },
+      });
+    } else if (!existingUser.verifiedAt) {
+      existingUser = await prisma.users.update({
+        where: { email: user.email },
+        data: { verifiedAt: new Date() },
+      });
+    }
 
-        (user as any).id = existingUser.id;
-        (user as any).role = existingUser.role;
-      }
-      return true;
-    },
+    // Inject the proper user.id into `user` so NextAuth can use it in jwt
+    (user as any).id = existingUser.id;
+    (user as any).role = existingUser.role;
+  }
+    return true;
+  },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -92,5 +101,8 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-  },
+  }
 };
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

@@ -5,8 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BaseAlert from "@/components/base-alert";
 import LoaderSpinner from "@/components/loader-spinner";
-import { signIn } from "next-auth/react";
-import { getSession } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -19,7 +18,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
     const router = useRouter(); 
-
+  
     const handleLogin = async () => {
       setLoading(true);
       const res = await signIn("credentials", {
@@ -70,6 +69,12 @@ export default function LoginPage() {
         setIsLoadingGoogle(false);
       }
     };
+
+  //    const handleGoogleLogin = async () => {
+  //   setIsLoadingGoogle(true);
+  //   // Tidak perlu await + tidak perlu router.push
+  //   signIn("google", { callbackUrl: "/" });
+  // };
 
 
   return (
