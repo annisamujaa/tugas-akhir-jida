@@ -17,6 +17,8 @@ export default function EditMenu() {
   const fetchMenu = async () => {
       try {
         const res = await fetch(`/api/admin/menu/${id}`);
+console.log("ID:", id); // pastikan id-nya ada
+
         const data = await res.json();
         if (res.ok) {
           setMenu(data);

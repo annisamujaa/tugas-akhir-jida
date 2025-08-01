@@ -1,42 +1,60 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  const id = request.nextUrl.pathname.split('/').pop(); // ✅ Ambil id dari URL
+
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
 
   if (!id) {
-    return NextResponse.json({ error: 'ID tidak valid' }, { status: 400 });
+    return NextResponse.json({ error: "ID tidak ditemukan" }, { status: 400 });
   }
 
   try {
-    const order = await prisma.order.findUnique({ where: { id } });
+    const menu = await prisma.menu.findUnique({
+      where: { id },
+    });
 
-    if (!order) {
-      return NextResponse.json({ error: 'Order tidak ditemukan' }, { status: 404 });
+    if (!menu) {
+      return NextResponse.json({ error: "Menu tidak ditemukan" }, { status: 404 }); // ✅ HARUS JSON
     }
 
-    return NextResponse.json(order);
-  } catch (err) {
-    return NextResponse.json({ error: 'Gagal mengambil order' }, { status: 500 });
+    return NextResponse.json(menu);
+  } catch (error) {
+    console.error("Gagal fetch menu:", error);
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 }); // ✅ HARUS JSON
   }
 }
 
-export async function PATCH(request: NextRequest) {
-  const id = request.nextUrl.pathname.split('/').pop();
-
-  if (!id) {
-    return NextResponse.json({ error: 'ID tidak valid' }, { status: 400 });
-  }
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
 
   try {
-    const body = await request.json();
-    const updated = await prisma.order.update({
+    const body = await req.json();
+
+    // Validasi manual (opsional tapi disarankan)
+    if (!body.name || !body.price || !body.description) {
+      return NextResponse.json(
+        { error: 'Field wajib tidak lengkap' },
+        { status: 400 }
+      );
+    }
+
+    const updated = await prisma.menu.update({
       where: { id },
-      data: body,
+      data: {
+        name: body.name,
+        price: Number(body.price),
+        description: body.description,
+        image: body.image,
+      },
     });
 
     return NextResponse.json(updated);
-  } catch (err) {
-    return NextResponse.json({ error: 'Gagal mengupdate order' }, { status: 500 });
+  } catch (error) {
+    console.error('PATCH Error:', error);
+    return NextResponse.json({ error: 'Gagal mengupdate menu' }, { status: 500 });
   }
 }

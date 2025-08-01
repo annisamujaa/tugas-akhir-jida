@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
-export async function GET(request: NextRequest) {
-  // Ambil ID dari pathname: /api/admin/menu/[id]
-  const id = request.nextUrl.pathname.split("/").pop();
+// GET menu by ID
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const id = params.id;
 
   if (!id) {
-    return NextResponse.json({ message: "ID tidak ditemukan" }, { status: 400 });
+    return NextResponse.json({ error: 'ID tidak ditemukan' }, { status: 400 });
   }
 
   try {
@@ -15,12 +18,39 @@ export async function GET(request: NextRequest) {
     });
 
     if (!menu) {
-      return NextResponse.json({ message: "Menu tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ error: 'Menu tidak ditemukan' }, { status: 404 });
     }
 
     return NextResponse.json(menu);
   } catch (error) {
-    console.error("Gagal fetch menu:", error);
-    return NextResponse.json({ message: "Terjadi kesalahan server" }, { status: 500 });
+    console.error('Gagal ambil menu:', error);
+    return NextResponse.json({ error: 'Terjadi kesalahan server' }, { status: 500 });
+  }
+}
+
+// PATCH update menu by ID
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const id = params.id;
+
+  if (!id) {
+    return NextResponse.json({ error: 'ID tidak ditemukan' }, { status: 400 });
+  }
+
+  try {
+    const body = await req.json();
+    const { name, price, description, image } = body;
+
+    const updatedMenu = await prisma.menu.update({
+      where: { id },
+      data: { name, price, description, image },
+    });
+
+    return NextResponse.json(updatedMenu);
+  } catch (error) {
+    console.error('Gagal update menu:', error);
+    return NextResponse.json({ error: 'Gagal mengupdate produk' }, { status: 500 });
   }
 }
