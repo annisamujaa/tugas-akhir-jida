@@ -19,7 +19,7 @@ const [menu, setMenu] = useState<Menu[]>([]);
 
 const fetchMenu = async () => {
   try {
-    const res = await fetch('/api/admin/menu');
+    const res = await fetch('/api/user/menu');
     
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
