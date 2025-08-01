@@ -1,22 +1,24 @@
 // ✅ /app/menu/[id]/page.tsx
+export const dynamic = 'force-dynamic'; // <— TAMBAHKAN INI
 
 import { prisma } from '@/lib/prisma';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import QuantityClient from './quantityClient'; 
+import QuantityClient from './quantityClient';
 
 export default async function Page({
   params,
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   const menu = await prisma.menu.findUnique({
     where: { id },
   });
 
-  if (!menu) return notFound()
+  if (!menu) return notFound();
+
   return (
     <main className="min-h-screen bg-gray-50 py-10">
       <h1 className="text-2xl font-bold text-center mb-6">Menu Yang Kamu Pilih</h1>
@@ -31,19 +33,16 @@ export default async function Page({
               className="rounded-lg object-cover w-full h-auto"
             />
           </div>
-
           <div className="flex-1 space-y-4">
             <h2 className="text-3xl text-red-700 font-semibold mb-3">{menu.name}</h2>
             <p>{menu.description}</p>
           </div>
         </div>
       </div>
-      <div className="max-w-3xl mx-auto ">
-        {/* Client-side logic dipisah */}
+      <div className="max-w-3xl mx-auto">
         <QuantityClient price={menu.price} menuId={menu.id} />
       </div>
-            
-            
+
     </main>
   );
 }
