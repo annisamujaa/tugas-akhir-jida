@@ -13,11 +13,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      authorization: {
-        params: {
-          prompt: "select_account",
-        },
-      },
+      authorization: { params: { prompt: "select_account" } },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -37,7 +33,6 @@ export const authOptions: NextAuthOptions = {
         if (!user) throw new Error("No user found");
         if (!user.password) throw new Error("No password set for user");
         if (!user.verifiedAt) throw new Error("User not verified");
-
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) throw new Error("Invalid password");
 
@@ -45,7 +40,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role: user.role
         };
       },
     }),
