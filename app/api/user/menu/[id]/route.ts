@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { URL } from 'url';
+
+// Helper untuk ambil ID dari URL
+function extractIdFromUrl(req: NextRequest) {
+  const pathname = new URL(req.url).pathname;
+  const id = pathname.split('/').pop();
+  return id || '';
+}
 
 // GET menu by ID
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
+export async function GET(req: NextRequest) {
+  const id = extractIdFromUrl(req);
 
   if (!id) {
     return NextResponse.json({ error: 'ID tidak ditemukan' }, { status: 400 });
@@ -29,11 +34,8 @@ export async function GET(
 }
 
 // PATCH update menu by ID
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
+export async function PATCH(req: NextRequest) {
+  const id = extractIdFromUrl(req);
 
   if (!id) {
     return NextResponse.json({ error: 'ID tidak ditemukan' }, { status: 400 });
