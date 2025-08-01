@@ -12,9 +12,7 @@ interface Props {
 export default async function MenuDetailPage({ params }: Props) {
   const { id } = params;
 
-  const menu = await prisma.menu.findUnique({
-    where: { id },
-  });
+  const menu = await prisma.menu.findUnique({ where: { id } }); 
 
   if (!menu) return notFound();
 
